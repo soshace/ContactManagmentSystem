@@ -1,15 +1,11 @@
 package contactMS.dao.user;
 
-import java.util.List;
-
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Root;
-
 import contactMS.dao.JpaDao;
 import contactMS.entity.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -18,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 public class JpaUserDao extends JpaDao<User, Long> implements UserDao
 {
-
+    @Autowired private MongoOperations mongoOperations;
 	public JpaUserDao()
 	{
 		super(User.class);
@@ -42,21 +38,7 @@ public class JpaUserDao extends JpaDao<User, Long> implements UserDao
 	@Transactional(readOnly = true)
 	public User findByName(String name)
 	{
-		final CriteriaBuilder builder = this.getEntityManager().getCriteriaBuilder();
-		final CriteriaQuery<User> criteriaQuery = builder.createQuery(this.entityClass);
-
-		Root<User> root = criteriaQuery.from(this.entityClass);
-		Path<String> namePath = root.get("name");
-		criteriaQuery.where(builder.equal(namePath, name));
-
-		TypedQuery<User> typedQuery = this.getEntityManager().createQuery(criteriaQuery);
-		List<User> users = typedQuery.getResultList();
-
-		if (users.isEmpty()) {
-			return null;
-		}
-
-		return users.iterator().next();
+		return mongoOperations.findOne(Query.query(Criteria.where("name").is(name)), this.entityClass);
 	}
 
 }

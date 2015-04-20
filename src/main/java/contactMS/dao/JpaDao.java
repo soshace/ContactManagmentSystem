@@ -1,56 +1,40 @@
 package contactMS.dao;
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-
 import contactMS.entity.Entity;
+import contactMS.entity.User;
+import java.util.Arrays;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.stereotype.Repository;
 
 import org.springframework.transaction.annotation.Transactional;
 
-
 public class JpaDao<T extends Entity, I> implements Dao<T, I>
 {
-
-	private EntityManager entityManager;
+        @Autowired private MongoOperations mongoOperations;
 
 	protected Class<T> entityClass;
 
-
+        public JpaDao()
+        {
+        }
+        
 	public JpaDao(Class<T> entityClass)
 	{
 		this.entityClass = entityClass;
 	}
 
-
-	public EntityManager getEntityManager()
-	{
-		return this.entityManager;
-	}
-
-
-	@PersistenceContext
-	public void setEntityManager(final EntityManager entityManager)
-	{
-		this.entityManager = entityManager;
-	}
-
-
 	@Override
 	@Transactional(readOnly = true)
 	public List<T> findAll()
 	{
-		final CriteriaBuilder builder = this.getEntityManager().getCriteriaBuilder();
-		final CriteriaQuery<T> criteriaQuery = builder.createQuery(this.entityClass);
-
-		criteriaQuery.from(this.entityClass);
-
-		TypedQuery<T> typedQuery = this.getEntityManager().createQuery(criteriaQuery);
-		return typedQuery.getResultList();
+		return mongoOperations.findAll(this.entityClass);
 	}
 
 
@@ -58,15 +42,16 @@ public class JpaDao<T extends Entity, I> implements Dao<T, I>
 	@Transactional(readOnly = true)
 	public T find(I id)
 	{
-		return this.getEntityManager().find(this.entityClass, id);
+                return mongoOperations.findOne(Query.query(Criteria.where("id").is(id)), this.entityClass);
 	}
 
 
-	@Override
+        @Override
 	@Transactional
 	public T save(T entity)
 	{
-		return this.getEntityManager().merge(entity);
+            mongoOperations.save(entity);
+            return entity;
 	}
 
 
@@ -83,7 +68,7 @@ public class JpaDao<T extends Entity, I> implements Dao<T, I>
 			return;
 		}
 
-		this.getEntityManager().remove(entity);
+		mongoOperations.remove(Query.query(Criteria.where("id").is(id)), this.entityClass);
 	}
 
 }

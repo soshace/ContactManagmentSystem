@@ -13,7 +13,6 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 /**
  * {@link AuthenticationEntryPoint} that rejects all requests with an unauthorized error message.
  * 
- * @author Philip W. Sorst <philip@sorst.net>
  */
 public class UnauthorizedEntryPoint implements AuthenticationEntryPoint
 {

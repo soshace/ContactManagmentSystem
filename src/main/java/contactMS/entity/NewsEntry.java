@@ -9,20 +9,18 @@ import javax.persistence.Id;
 import contactMS.JsonViews;
 
 import org.codehaus.jackson.map.annotate.JsonView;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 
 /**
- * JPA Annotated Pojo that represents a news entry.
- * 
- * @author Philip W. Sorst <philip@sorst.net>
+ * JPA Annotated Pojo that represents a contacts entry.
  */
-@javax.persistence.Entity
+@Document(collection = NewsEntry.COLLECTION_NAME)
 public class NewsEntry implements Entity
 {
-
-	@Id
-	@GeneratedValue
-	private Long id;
+        public static final String COLLECTION_NAME = "news";
+	@Column
+	private String id;
 
 	@Column
 	private Date date;
@@ -37,8 +35,8 @@ public class NewsEntry implements Entity
 	}
 
 
-	@JsonView(JsonViews.Admin.class)
-	public Long getId()
+	@JsonView(JsonViews.User.class)
+	public String getId()
 	{
 		return this.id;
 	}
@@ -73,7 +71,7 @@ public class NewsEntry implements Entity
 	@Override
 	public String toString()
 	{
-		return String.format("NewsEntry[%d, %s]", this.id, this.content);
+		return String.format("NewsEntry[%s, %s]", this.id, this.content);
 	}
 
 }

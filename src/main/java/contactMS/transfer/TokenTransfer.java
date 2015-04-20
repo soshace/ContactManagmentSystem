@@ -10,6 +10,11 @@ public class TokenTransfer
 	{
 		this.token = token;
 	}
+        
+        public TokenTransfer()
+	{
+		this.token = "";
+	}
 
 
 	public String getToken()

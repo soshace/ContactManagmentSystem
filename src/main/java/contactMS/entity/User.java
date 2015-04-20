@@ -10,19 +10,20 @@ import javax.persistence.ElementCollection;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 
-@javax.persistence.Entity
+@Document(collection = User.COLLECTION_NAME)
 public class User implements Entity, UserDetails
 {
+        public static final String COLLECTION_NAME = "user";
 
-	@Id
-	@GeneratedValue
-	private Long id;
+	@Column
+	private String id;
 
 	@Column(unique = true, length = 16, nullable = false)
 	private String name;
@@ -47,13 +48,13 @@ public class User implements Entity, UserDetails
 	}
 
 
-	public Long getId()
+	public String getId()
 	{
 		return this.id;
 	}
 
 
-	public void setId(Long id)
+	public void setId(String id)
 	{
 		this.id = id;
 	}
@@ -115,7 +116,6 @@ public class User implements Entity, UserDetails
 		for (String role : roles) {
 			authorities.add(new SimpleGrantedAuthority(role));
 		}
-
 		return authorities;
 	}
 

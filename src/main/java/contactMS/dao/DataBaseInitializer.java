@@ -23,18 +23,13 @@ public class DataBaseInitializer
 
 	private PasswordEncoder passwordEncoder;
 
-
-	protected DataBaseInitializer()
-	{
-		/* Default constructor for reflection instantiation */
-	}
-
-
 	public DataBaseInitializer(UserDao userDao, NewsEntryDao newsEntryDao, PasswordEncoder passwordEncoder)
 	{
-		this.userDao = userDao;
-		this.newsEntryDao = newsEntryDao;
-		this.passwordEncoder = passwordEncoder;
+            this.newsEntryDao = newsEntryDao;
+
+            this.userDao = userDao;
+
+            this.passwordEncoder = passwordEncoder;
 	}
 
 

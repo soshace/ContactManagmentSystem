@@ -14,10 +14,12 @@ import javax.ws.rs.core.MediaType;
 import contactMS.rest.TokenUtils;
 import contactMS.transfer.TokenTransfer;
 import contactMS.transfer.UserTransfer;
+import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -28,6 +30,7 @@ import org.springframework.stereotype.Component;
 
 
 @Component
+@Resource
 @Path("/user")
 public class UserResource
 {
@@ -76,8 +79,12 @@ public class UserResource
 	{
 		UsernamePasswordAuthenticationToken authenticationToken =
 				new UsernamePasswordAuthenticationToken(username, password);
-		Authentication authentication = this.authManager.authenticate(authenticationToken);
+                try{
+                    Authentication authentication = this.authManager.authenticate(authenticationToken);
+                
+                System.out.println("Username and password get");
 		SecurityContextHolder.getContext().setAuthentication(authentication);
+                System.out.println("Username and password get");
 
 		/*
 		 * Reload user as password of authentication principal will be null after authorization and
@@ -86,6 +93,11 @@ public class UserResource
 		UserDetails userDetails = this.userService.loadUserByUsername(username);
 
 		return new TokenTransfer(TokenUtils.createToken(userDetails));
+                }
+                catch(BadCredentialsException e){
+                    System.out.println("Wrong login or password");
+                }
+                return new TokenTransfer();
 	}
 
 

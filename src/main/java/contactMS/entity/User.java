@@ -8,7 +8,6 @@ import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -16,142 +15,107 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-
 @Document(collection = User.COLLECTION_NAME)
-public class User implements Entity, UserDetails
-{
-        public static final String COLLECTION_NAME = "user";
+public class User implements Entity, UserDetails {
 
-	@Column
-	private String id;
+    public static final String COLLECTION_NAME = "user";
 
-	@Column(unique = true, length = 16, nullable = false)
-	private String name;
+    @Id
+    private String id;
 
-	@Column(length = 80, nullable = false)
-	private String password;
+    @Column(unique = true, length = 16, nullable = false)
+    private String name;
 
-	@ElementCollection(fetch = FetchType.EAGER)
-	private Set<String> roles = new HashSet<String>();
+    @Column(length = 80, nullable = false)
+    private String password;
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    private Set<String> roles = new HashSet<String>();
 
-	protected User()
-	{
-		/* Reflection instantiation */
-	}
+    protected User() {
+        /* Reflection instantiation */
+    }
 
+    public User(String name, String passwordHash) {
+        this.name = name;
+        this.password = passwordHash;
+    }
 
-	public User(String name, String passwordHash)
-	{
-		this.name = name;
-		this.password = passwordHash;
-	}
+    public String getId() {
+        return this.id;
+    }
 
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public String getId()
-	{
-		return this.id;
-	}
+    public String getName() {
+        return this.name;
+    }
 
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setId(String id)
-	{
-		this.id = id;
-	}
+    public Set<String> getRoles() {
+        return this.roles;
+    }
 
+    public void setRoles(Set<String> roles) {
+        this.roles = roles;
+    }
 
-	public String getName()
-	{
-		return this.name;
-	}
+    public void addRole(String role) {
+        this.roles.add(role);
+    }
 
+    @Override
+    public String getPassword() {
+        return this.password;
+    }
 
-	public void setName(String name)
-	{
-		this.name = name;
-	}
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        Set<String> roles = this.getRoles();
 
-	public Set<String> getRoles()
-	{
-		return this.roles;
-	}
+        if (roles == null) {
+            return Collections.emptyList();
+        }
 
+        Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
+        for (String role : roles) {
+            authorities.add(new SimpleGrantedAuthority(role));
+        }
+        return authorities;
+    }
 
-	public void setRoles(Set<String> roles)
-	{
-		this.roles = roles;
-	}
+    @Override
+    public String getUsername() {
+        return this.name;
+    }
 
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
 
-	public void addRole(String role)
-	{
-		this.roles.add(role);
-	}
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
 
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
 
-	@Override
-	public String getPassword()
-	{
-		return this.password;
-	}
-
-
-	public void setPassword(String password)
-	{
-		this.password = password;
-	}
-
-
-	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities()
-	{
-		Set<String> roles = this.getRoles();
-
-		if (roles == null) {
-			return Collections.emptyList();
-		}
-
-		Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
-		for (String role : roles) {
-			authorities.add(new SimpleGrantedAuthority(role));
-		}
-		return authorities;
-	}
-
-
-	@Override
-	public String getUsername()
-	{
-		return this.name;
-	}
-
-
-	@Override
-	public boolean isAccountNonExpired()
-	{
-		return true;
-	}
-
-
-	@Override
-	public boolean isAccountNonLocked()
-	{
-		return true;
-	}
-
-
-	@Override
-	public boolean isCredentialsNonExpired()
-	{
-		return true;
-	}
-
-
-	@Override
-	public boolean isEnabled()
-	{
-		return true;
-	}
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 
 }

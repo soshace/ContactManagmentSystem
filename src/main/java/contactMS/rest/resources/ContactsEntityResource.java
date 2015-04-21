@@ -30,104 +30,90 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-
 @Component
 @Path("/contacts")
-public class ContactsEntityResource 
-{
+public class ContactsEntityResource {
 
-	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	@Autowired
-	private ContactsEntityDao contactsEntityDao;
+    @Autowired
+    private ContactsEntityDao contactsEntityDao;
 
-	@Autowired
-	private ObjectMapper mapper;
+    @Autowired
+    private ObjectMapper mapper;
 
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public String list() throws JsonGenerationException, JsonMappingException, IOException {
+        this.logger.info("list()");
 
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	public String list() throws JsonGenerationException, JsonMappingException, IOException
-	{
-		this.logger.info("list()");
+        ObjectWriter viewWriter;
+        if (this.isAdmin()) {
+            viewWriter = this.mapper.writerWithView(JsonViews.Admin.class);
+        } else {
+            viewWriter = this.mapper.writerWithView(JsonViews.User.class);
+        }
+        List<ContactsEntity> allEntries = this.contactsEntityDao.findAll();
 
-		ObjectWriter viewWriter;
-		if (this.isAdmin()) {
-			viewWriter = this.mapper.writerWithView(JsonViews.Admin.class);
-		} else {
-			viewWriter = this.mapper.writerWithView(JsonViews.User.class);
-		}
-		List<ContactsEntity> allEntries = this.contactsEntityDao.findAll();
+        return viewWriter.writeValueAsString(allEntries);
+    }
 
-		return viewWriter.writeValueAsString(allEntries);
-	}
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("{id}")
+    public ContactsEntity read(@PathParam("id") String id) {
+        this.logger.info("read(id)");
 
+        ContactsEntity contactsEntity = this.contactsEntityDao.find(id);
+        if (contactsEntity == null) {
+            throw new WebApplicationException(404);
+        }
+        return contactsEntity;
+    }
 
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	@Path("{id}")
-	public ContactsEntity read(@PathParam("id") Long id)
-	{
-		this.logger.info("read(id)");
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public String create(ContactsEntity contactsEntity) {
+        this.logger.info("create(): " + contactsEntity);
 
-		ContactsEntity contactsEntity = this.contactsEntityDao.find(id);
-		if (contactsEntity == null) {
-			throw new WebApplicationException(404);
-		}
-		return contactsEntity;
-	}
+        return this.contactsEntityDao.save(contactsEntity);
+    }
 
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("{id}")
+    public String update(@PathParam("id") String id, ContactsEntity contactsEntity) {
+        this.logger.info("update(): " + contactsEntity);
 
-	@POST
-	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_JSON)
-	public ContactsEntity create(ContactsEntity contactsEntity)
-	{
-		this.logger.info("create(): " + contactsEntity);
+        return this.contactsEntityDao.save(contactsEntity);
+    }
 
-		return this.contactsEntityDao.save(contactsEntity);
-	}
+    @DELETE
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("{id}")
+    public void delete(@PathParam("id") String id) {
+        this.logger.info("delete(id)");
 
+        this.contactsEntityDao.delete(id);
+    }
 
-	@POST
-	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("{id}")
-	public ContactsEntity update(@PathParam("id") Long id, ContactsEntity contactsEntity)
-	{
-		this.logger.info("update(): " + contactsEntity);
+    private boolean isAdmin() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof String && ((String) principal).equals("anonymousUser")) {
+            return false;
+        }
+        UserDetails userDetails = (UserDetails) principal;
 
-		return this.contactsEntityDao.save(contactsEntity);
-	}
+        for (GrantedAuthority authority : userDetails.getAuthorities()) {
+            if (authority.toString().equals("admin")) {
+                return true;
+            }
+        }
 
-
-	@DELETE
-	@Produces(MediaType.APPLICATION_JSON)
-	@Path("{id}")
-	public void delete(@PathParam("id") Long id)
-	{
-		this.logger.info("delete(id)");
-
-		this.contactsEntityDao.delete(id);
-	}
-
-
-	private boolean isAdmin()
-	{
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		Object principal = authentication.getPrincipal();
-		if (principal instanceof String && ((String) principal).equals("anonymousUser")) {
-			return false;
-		}
-		UserDetails userDetails = (UserDetails) principal;
-
-		for (GrantedAuthority authority : userDetails.getAuthorities()) {
-			if (authority.toString().equals("admin")) {
-				return true;
-			}
-		}
-
-		return false;
-	}
+        return false;
+    }
 
 }

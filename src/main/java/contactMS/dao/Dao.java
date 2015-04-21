@@ -4,19 +4,11 @@ import java.util.List;
 
 import contactMS.entity.Entity;
 
+public interface Dao<T extends Entity> {
 
-public interface Dao<T extends Entity, I>
-{
+    List<T> findAll();
 
-	List<T> findAll();
+    T find(String id);
 
-
-	T find(I id);
-
-
-	T save(T newsEntry);
-
-
-	void delete(I id);
-
+    void delete(String id);
 }

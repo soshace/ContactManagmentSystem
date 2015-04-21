@@ -1,17 +1,18 @@
 <div class="pull-right">
-	<a href="#!/create" class="btn btn-default" ng-show="hasRole('admin')" title="Create"><span class="glyphicon glyphicon-plus"></span></a>
+    <a href="#!/create" class="btn btn-default" ng-show="hasRole('admin')" title="Create"><span class="glyphicon glyphicon-plus"></span></a>
 </div>
 <div class="page-header">
-	<h3>News</h3>
+    <h3>Contacts List</h3>
 </div>
 
-<div ng-repeat="newsEntry in newsEntries">
-	<hr />
-	<div class="pull-right">
-		<a href="" ng-click="deleteEntry(newsEntry)" class="btn btn-xs btn-default" ng-show="hasRole('admin')" title="delete"><span class="glyphicon glyphicon-trash"></span></a>
-		<a href="#!/edit/{{newsEntry.id}}" class="btn btn-xs btn-default" ng-cloak ng-show="hasRole('admin')" title="edit"><span class="glyphicon glyphicon-pencil"></span></a>
-	</div>
-	<h4 ng-cloak>{{newsEntry.date | date}}</h4>
-	<p ng-cloak>{{newsEntry.content}}</p>
+<div ng-repeat="contactsEntry in contactsEntries">
+    <hr />
+    <div class="pull-right">
+        <a href="" ng-click="deleteEntry(contactsEntry)" class="btn btn-xs btn-default" ng-show="hasRole('admin')" title="delete"><span class="glyphicon glyphicon-trash"></span></a>
+        <a href="#!/edit/{{contactsEntry.id}}" class="btn btn-xs btn-default" ng-cloak ng-show="hasRole('admin')" title="edit"><span class="glyphicon glyphicon-pencil"></span></a>
+    </div>
+    <h4 ng-cloak>{{contactsEntry.firstName}} {{contactsEntry.lastName}}</h4>
+    <p ng-cloak>{{contactsEntry.phoneNumber}}</p>
+    <p ng-cloak>{{contactsEntry.additionalInformation}}</p>
 </div>
 <hr />

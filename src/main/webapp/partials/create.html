@@ -1,17 +1,35 @@
 <div class="page-header">
-	<h3>Create</h3>
+    <h3>Create</h3>
 </div>
 
 <form class="form-horizontal">
-	<div class="form-group">
-		<label class="control-label col-sm-2" for="content">Content</label>
-		<div class="col-sm-10">
-			<textarea ng-cloak ng-model="newsEntry.content" id="content" class="form-control" rows="10">{{newsEntry.content}}</textarea>
-		</div>
-	</div>
-	<div class="form-group">
-		<div class="col-sm-10 col-sm-offset-2">
-			<button type="submit" class="btn btn-primary" ng-click="save()"><span class="glyphicon glyphicon-ok"></span> Save</button>
-		</div>
-	</div>
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="content">First Name</label>
+        <div class="col-sm-10">
+            <textarea ng-cloak ng-model="contactsEntry.firstName" id="content" class="form-control" rows="1">{{contactsEntry.firstName}}</textarea>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="lastName">Last Name</label>
+        <div class="col-sm-10">
+            <textarea ng-cloak ng-model="contactsEntry.lastName" id="content" class="form-control" rows="1">{{contactsEntry.lastName}}</textarea>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="phoneNumber">Phone Number</label>
+        <div class="col-sm-10">
+            <textarea ng-cloak ng-model="contactsEntry.phoneNumber" id="content" class="form-control" rows="1">{{contactsEntry.phoneNumber}}</textarea>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="additionalInformation">Additional Information</label>
+        <div class="col-sm-10">
+            <textarea ng-cloak ng-model="contactsEntry.additionalInformation" id="content" class="form-control" rows="3">{{contactsEntry.additionalInformation}}</textarea>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-10 col-sm-offset-2">
+            <button type="submit" class="btn btn-primary" ng-click="save()"><span class="glyphicon glyphicon-ok"></span> Save</button>
+        </div>
+    </div>
 </form>

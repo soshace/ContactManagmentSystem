@@ -10,82 +10,78 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.map.annotate.JsonView;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-
 /**
  * Represent a contacts entity.
  */
-
 @Document(collection = ContactsEntity.COLLECTION_NAME)
 @XmlRootElement
-public class ContactsEntity implements Entity
-{       
-        public static final String COLLECTION_NAME = "contacts";
-	@Column
-	private String id;
+public class ContactsEntity implements Entity {
 
-	@Column
-	private String firstName;
+    public static final String COLLECTION_NAME = "contacts";
+    @Id
+    private String id;
 
-	@Column
-	private String lastName;
+    @Column
+    private String firstName;
 
-        @Column
-	private String phoneNumber;
-        
-        @Column
-	private String additionalInformation;
+    @Column
+    private String lastName;
 
+    @Column
+    private String phoneNumber;
 
-	public String getId()
-	{
-		return this.id;
-	}
+    @Column
+    private String additionalInformation;
+    
+     public ContactsEntity(){
+    }
+     
+    public ContactsEntity(String firstName, String lastName, String phoneNumber, String additionalInformation){
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.phoneNumber = phoneNumber;
+        this.additionalInformation = additionalInformation;
+    }
+    
+    public String getId() {
+        return this.id;
+    }
 
-	public String getFirstName()
-	{
-		return this.firstName;
-	}
+    public String getFirstName() {
+        return this.firstName;
+    }
 
-	public void setFirstName(String name)
-	{
-		this.firstName = name;
-	}
- 
-	public String getLastName()
-	{
-		return this.lastName;
-	}
+    public void setFirstName(String name) {
+        this.firstName = name;
+    }
 
+    public String getLastName() {
+        return this.lastName;
+    }
 
-	public void setLastName(String name)
-	{
-		this.lastName = name;
-	}
+    public void setLastName(String name) {
+        this.lastName = name;
+    }
 
-        public String getPhoneNumber()
-	{
-		return this.phoneNumber;
-	}
+    public String getPhoneNumber() {
+        return this.phoneNumber;
+    }
 
-	public void setPhoneNumber(String phone)
-	{
-		this.phoneNumber = phone;
-	}
+    public void setPhoneNumber(String phone) {
+        this.phoneNumber = phone;
+    }
 
-        public String getAdditionalInformation()
-	{
-		return this.phoneNumber;
-	}
+    public String getAdditionalInformation() {
+        return this.additionalInformation;
+    }
 
-	public void setAdditionalInformation(String phone)
-	{
-		this.phoneNumber = phone;
-	}
+    public void setAdditionalInformation(String phone) {
+        this.additionalInformation = phone;
+    }
 
-	@Override
-	public String toString()
-	{
-		return String.format("ContactEntity[%s, %s, %s, %s, %s]", this.id, this.firstName, this.lastName, this.phoneNumber, this.additionalInformation);
-	}
+    @Override
+    public String toString() {
+        return String.format("ContactEntity[%s, %s, %s, %s, %s]", this.id, this.firstName, this.lastName, this.phoneNumber, this.additionalInformation);
+    }
 
 }

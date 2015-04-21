@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:jee="http://www.springframework.org/schema/jee"
-	xmlns:util="http://www.springframework.org/schema/util"
-	xmlns:mongo="http://www.springframework.org/schema/data/mongo"
-	xmlns:tx="http://www.springframework.org/schema/tx"
-	xmlns:security="http://www.springframework.org/schema/security"
-	xsi:schemaLocation="
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jee="http://www.springframework.org/schema/jee"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="
 			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
 			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
 			http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.2.xsd
@@ -16,11 +16,11 @@
 			http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd
 			http://www.springframework.org/schema/data/mongo http://www.springframework.org/schema/data/mongo/spring-mongo.xsd">
 
-	<context:annotation-config />
+    <context:annotation-config />
 
-	<!--
-		DATABASE SETUP 
-	 -->
+    <!--
+           DATABASE SETUP 
+    -->
          
         
 
@@ -28,76 +28,69 @@
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
     </context:component-scan>
     
-	<!-- create bin 'mongo' -->
+    <!-- create bin 'mongo' -->
     <mongo:mongo id="mongo" host="127.0.0.1" port="27017"/>
-	<mongo:db-factory
-            dbname="mydb"
-            mongo-ref="mongo"/>
+    <mongo:db-factory
+        dbname="mydb"
+        mongo-ref="mongo"/>
 
     <bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
         <constructor-arg name="mongoDbFactory" ref="mongoDbFactory"/>
     </bean>
 	
-	<bean id="newsEntryDao" class="contactMS.dao.newsentry.JpaNewsEntryDao">
-	</bean>
+    <bean id="contactsEntityDao" class="contactMS.dao.contacts.JpaContactsEntityDao">
+    </bean>
 	
-	<bean id="contactsEntityDao" class="contactMS.dao.contacts.JpaContactsEntityDao">
-	</bean>
-	
-	<bean id="userDao" class="contactMS.dao.user.JpaUserDao">
-	</bean>
+    <bean id="userDao" class="contactMS.dao.user.JpaUserDao">
+    </bean>
 
-	<!--
-		INIT REST COMPONENTS 
-	 -->
+    <!--
+           INIT REST COMPONENTS 
+    -->
 	
-	<context:component-scan base-package="contactMS.rest.resources" />
+    <context:component-scan base-package="contactMS.rest.resources" />
 	
-	<bean id="objectMapper" class="org.codehaus.jackson.map.ObjectMapper" />
+    <bean id="objectMapper" class="org.codehaus.jackson.map.ObjectMapper" />
 	
-	<!-- 
-		SPRING SECURITY SETUP
-	-->
+    <!-- 
+            SPRING SECURITY SETUP
+    -->
 	
-	<bean id="passwordEncoder" class="org.springframework.security.crypto.password.StandardPasswordEncoder">
-		<constructor-arg value="ThisIsASecretSoChangeMe" />
-	</bean>
+    <bean id="passwordEncoder" class="org.springframework.security.crypto.password.StandardPasswordEncoder">
+        <constructor-arg value="ThisIsASecretSoChangeMe" />
+    </bean>
         
-        <bean id="dataBaseInitializer" class="contactMS.dao.DataBaseInitializer" init-method="initDataBase">
-		<constructor-arg ref="userDao" />
-		<constructor-arg ref="newsEntryDao" />
-		<constructor-arg ref="passwordEncoder" />
-	</bean>
+    <bean id="dataBaseInitializer" class="contactMS.dao.DataBaseInitializer" init-method="initDataBase">
+        <constructor-arg ref="userDao" />
+		<constructor-arg ref="contactsEntityDao" />
+        <constructor-arg ref="passwordEncoder" />
+    </bean>
 	
-	<security:authentication-manager id="authenticationManager">
-		<security:authentication-provider user-service-ref="userDao">
-			<security:password-encoder ref="passwordEncoder"></security:password-encoder>
-		</security:authentication-provider>
-	</security:authentication-manager>
+    <security:authentication-manager id="authenticationManager">
+        <security:authentication-provider user-service-ref="userDao">
+            <security:password-encoder ref="passwordEncoder"></security:password-encoder>
+        </security:authentication-provider>
+    </security:authentication-manager>
 
-	<security:http
-			realm="Protected API"
-			use-expressions="true"
-			auto-config="false"
-			create-session="stateless"
-			entry-point-ref="unauthorizedEntryPoint"
-			authentication-manager-ref="authenticationManager">
-		<security:custom-filter ref="authenticationTokenProcessingFilter" position="FORM_LOGIN_FILTER" />
-		<security:intercept-url pattern="/rest/user/authenticate" access="permitAll" />
-		<security:intercept-url method="GET" pattern="/rest/news/**" access="permitAll" />
-		<security:intercept-url method="PUT" pattern="/rest/news/**" access="permitAll" />
-		<security:intercept-url method="POST" pattern="/rest/news/**" access="permitAll" />
-		<security:intercept-url method="DELETE" pattern="/rest/news/**" access="permitAll" />
-                
-                <security:intercept-url method="GET" pattern="/rest/contacts/**" access="hasRole('user')" />
-		<security:intercept-url method="PUT" pattern="/rest/contacts/**" access="hasRole('admin')" />
-		<security:intercept-url method="POST" pattern="/rest/contacts/**" access="hasRole('admin')" />
-		<security:intercept-url method="DELETE" pattern="/rest/contacts/**" access="hasRole('admin')" />
-	</security:http>
+    <security:http
+        realm="Protected API"
+        use-expressions="true"
+        auto-config="false"
+        create-session="stateless"
+        entry-point-ref="unauthorizedEntryPoint"
+        authentication-manager-ref="authenticationManager">
+        <security:custom-filter ref="authenticationTokenProcessingFilter" position="FORM_LOGIN_FILTER" />
+        <security:intercept-url pattern="/rest/user/authenticate" access="permitAll" />
+          
+        <security:intercept-url method="GET" pattern="/rest/contacts/**" access="permitAll" />
+        <security:intercept-url method="PUT" pattern="/rest/contacts/**" access="permitAll" />
+        <security:intercept-url method="POST" pattern="/rest/contacts/**" access="permitAll" />
+        <security:intercept-url method="DELETE" pattern="/rest/contacts/**" access="permitAll" />
+    </security:http>
 
-	<bean id="unauthorizedEntryPoint" class="contactMS.rest.UnauthorizedEntryPoint" />
+    <bean id="unauthorizedEntryPoint" class="contactMS.rest.UnauthorizedEntryPoint" />
 
-	<bean class="contactMS.rest.AuthenticationTokenProcessingFilter" id="authenticationTokenProcessingFilter">
-		<constructor-arg ref="userDao" />
-	</bean>
+    <bean class="contactMS.rest.AuthenticationTokenProcessingFilter" id="authenticationTokenProcessingFilter">
+        <constructor-arg ref="userDao" />
+    </bean>
 </beans>

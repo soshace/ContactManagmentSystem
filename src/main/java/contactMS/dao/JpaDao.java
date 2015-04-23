@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
+
 import org.springframework.transaction.annotation.Transactional;
 
 public class JpaDao<T extends Entity> implements Dao<T> {

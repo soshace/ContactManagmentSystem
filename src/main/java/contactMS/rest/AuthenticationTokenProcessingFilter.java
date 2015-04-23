@@ -43,7 +43,6 @@ public class AuthenticationTokenProcessingFilter extends GenericFilterBean {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }
-
         chain.doFilter(request, response);
     }
 
@@ -51,19 +50,16 @@ public class AuthenticationTokenProcessingFilter extends GenericFilterBean {
         if (!(request instanceof HttpServletRequest)) {
             throw new RuntimeException("Expecting an HTTP request");
         }
-
         return (HttpServletRequest) request;
     }
 
     private String extractAuthTokenFromRequest(HttpServletRequest httpRequest) {
         /* Get token from header */
         String authToken = httpRequest.getHeader("X-Auth-Token");
-
         /* If token not found get it from request parameter */
         if (authToken == null) {
             authToken = httpRequest.getParameter("token");
         }
-
         return authToken;
     }
 }

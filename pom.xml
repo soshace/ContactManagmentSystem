@@ -173,15 +173,15 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
-            <version>${spring.version}</version>
-            <scope>test</scope>
+            <version>4.1.6.RELEASE</version>
+            <type>jar</type>
         </dependency>
     	
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
+            <version>4.11</version>
+            <type>jar</type>
         </dependency>
     </dependencies>
     <name>ContactManagmentSystem</name>
